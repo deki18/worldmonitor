@@ -20,25 +20,7 @@
 | **桌面应用** | Tauri (Rust) | 轻量级，跨平台 |
 | **状态管理** | 自定义事件总线 | 无 Redux/Vuex 依赖 |
 
-### 1.2 项目结构
-
-```
-worldmonitor/
-├── src/
-│   ├── components/     # UI 组件（Panel-based 架构）
-│   ├── services/       # 业务逻辑层（80+ 服务模块）
-│   ├── config/         # 配置文件（变体、数据源）
-│   ├── utils/          # 工具函数
-│   ├── workers/        # Web Workers（ML、分析）
-│   └── locales/        # 多语言资源（16 语言）
-├── api/                # Vercel API 端点
-├── server/             # 服务端逻辑（RPC 处理）
-├── proto/              # Protocol Buffers 定义
-├── src-tauri/          # 桌面应用配置
-└── scripts/            # 数据构建脚本
-```
-
-### 1.3 变体架构
+### 1.2 变体架构
 
 项目采用**单一代码库，多形态输出**架构：
 
@@ -47,7 +29,6 @@ worldmonitor/
 | **World Monitor** | `VITE_VARIANT=full` | 地缘政治、军事 | 冲突区、军事基地 |
 | **Tech Monitor** | `VITE_VARIANT=tech` | 科技生态 | 科技公司 HQ、初创企业 |
 | **Finance Monitor** | `VITE_VARIANT=finance` | 金融市场 | 交易所、央行、商品中心 |
-| **Happy Monitor** | `VITE_VARIANT=happy` | 正面新闻 | 环保、慈善、物种恢复 |
 
 ---
 
@@ -90,7 +71,7 @@ worldmonitor/
 **数据源规模**：
 - **150+ RSS 源**（主版本）
 - **80+ 源**（科技版）
-- **多语言支持**: 17 种语言的本地化源
+- **多语言支持**: 中英两种语言的本地化源
 
 **核心源分类**：
 
@@ -102,7 +83,6 @@ worldmonitor/
 | 科技 | TechCrunch, The Verge, Ars Technica | 英文 |
 | 金融 | Bloomberg, FT, WSJ | 英文 |
 | 中文 | 新华社、环球时报、财新 | 中文 |
-| 阿拉伯语 | Al Arabiya, Al Jazeera Arabic | 阿拉伯语 |
 
 **数据处理**：
 - **服务端聚合**: `listFeedDigest` RPC 批量获取
@@ -655,11 +635,9 @@ const breaker = createCircuitBreaker({
 
 ### 6.1 语言支持
 
-**16 种语言**：
-- 欧洲: en, fr, de, es, it, nl, pl, pt, sv, cs
-- 亚洲: zh, ja, ko, th, vi
-- 中东: ar, tr
-- 其他: ru, el
+**2 种语言**：
+- 欧洲: en
+- 亚洲: zh
 
 ### 6.2 实现方式
 
@@ -672,89 +650,8 @@ const resources = {
   // ...
 };
 ```
-
-### 6.3 RTL 支持
-
-- 阿拉伯语 (ar) 和希伯来语 (he) 支持从右到左布局
-- CSS 自动适配: `direction: rtl`
-
-### 6.4 本地化 RSS 源
+### 6.3 本地化 RSS 源
 
 **自动语言匹配**：
 - 浏览器语言为法语 → 自动加载 Le Monde、France24
 - 浏览器语言为中文 → 加载新华社、环球时报
-
----
-
-## 七、桌面应用与 PWA
-
-### 7.1 Tauri 桌面应用
-
-**技术栈**: Rust + WebView2 (Windows) / WKWebView (macOS)
-
-**构建命令**：
-```bash
-npm run desktop:build:full    # 主版本
-npm run desktop:build:tech    # 科技版
-```
-
-**特性**：
-- 本地 LLM 自动发现（Ollama/LM Studio）
-- 离线地图支持
-- 系统托盘集成
-- 自动更新
-
-### 7.2 PWA 支持
-
-**vite-plugin-pwa 配置**：
-- Service Worker 缓存策略
-- 离线页面: `public/offline.html`
-- 应用清单: 多变体图标
-
----
-
-## 八、关键发现与建议
-
-### 8.1 架构优势
-
-1. **单一代码库多形态**: 高效维护，一致性体验
-2. **Protocol Buffers**: 强类型，自动生成客户端/服务端
-3. **分层缓存**: 性能优化，成本控制
-4. **LLM 回退链**: 高可用，隐私保护
-
-### 8.2 现存问题
-
-1. **航线渲染**: 大圆弧线不经过战略要道，视觉误导
-2. **数据质量**: 部分军事基地标记为"Unknown"，信息不完整
-3. **AIS 覆盖**: 中东/亚洲/远洋数据有限（依赖地面接收站）
-4. **移动端**: 降级为 D3/SVG，功能受限
-
-### 8.3 改进建议
-
-#### 短期
-- 改用 PathLayer 绘制贸易航线折线
-- 增加航线与要道节点的视觉连接
-- 优化"Unknown"基地的数据补充
-
-#### 中期
-- 集成卫星 AIS 数据（全球覆盖）
-- 增加更多本地语言 RSS 源
-- 优化移动端 deck.gl 性能
-
-#### 长期
-- 实时视频流 AI 分析
-- 预测模型集成（冲突预测、市场预测）
-- 更多数据源整合（卫星图像、社交媒体）
-
----
-
-## 九、总结
-
-World Monitor 是一个架构先进、数据源丰富的全球情报平台。其技术选型（TypeScript + deck.gl + Vercel + Tauri）兼顾了性能、可维护性和跨平台能力。多层级缓存和 LLM 回退链设计体现了对可用性和成本的深度考量。
-
-项目最大的价值在于**将分散的开源数据整合为统一的情报视图**，并通过 AI 提供洞察。但在数据可视化（航线渲染）和数据质量（未知基地）方面仍有改进空间。
-
----
-
-*报告生成时间: 2026-03-10*
-*分析范围: 源代码 + 配置文件 + 数据脚本*
